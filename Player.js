@@ -4,8 +4,8 @@
  * Author: Tom Jonson
  * Licensed under the GNU General Public License v2.0.
  * https://github.com/TomJonson/html5-Audio-Player/blob/master/LICENSE
- * Version: 5.1.0
- * Date: 21th September 2017
+ * Version: 5.1.1
+ * Date: 6.11.2018
  *
  * WebSite (https://github.com/TomJonson)
  */
@@ -106,7 +106,7 @@ fix.prototype = {
 };
 return fix;
 })(jQuery);
-var _volume = 100;
+var _volume = 50;
 var _sliderVolume = {};
 var _volumeWidth = 95;
 $(document).ready(function () {
@@ -139,7 +139,7 @@ $(document).ready(function () {
     });
     _player = jQuery("#containerHidden");
     var id = "#containerHidden";
-	var stream = { mp3: (location.protocol == "https:" ? "https:" : "http:") + "//radio.lradiostation.com/live" };
+	var stream = { mp3: (location.protocol == "https:" ? "https:" : "http:") + "//yours url here" };
     _player.bind($.jPlayer.event.stop, function () {
         _player.jPlayer("clearMedia"), StopPlayer(), _player.bind($.jPlayer.event.timeupdate, self.update_timer);
     }), _player.bind($.jPlayer.event.play, function () {
@@ -163,6 +163,7 @@ $(document).ready(function () {
 function PlayPause() {
     if (_isPlaying)
         return _player.jPlayer("clearMedia"), StopPlayer();
+	_player.jPlayer("play"), StartPlayer();
 }
 function StartPlayer() {
     jQuery("#aPlayPause").css("background-position", "-59px 0px");
