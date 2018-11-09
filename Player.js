@@ -4,8 +4,8 @@
  * Author: Tom Jonson
  * Licensed under the GNU General Public License v2.0.
  * https://github.com/TomJonson/html5-Audio-Player/blob/master/LICENSE
- * Version: 5.1.1
- * Date: 6.11.2018
+ * Version: 5.1.2
+ * Date: 9.11.2018
  *
  * WebSite (https://github.com/TomJonson)
  */
@@ -106,7 +106,7 @@ fix.prototype = {
 };
 return fix;
 })(jQuery);
-var _volume = 50;
+var _volume = 100;
 var _sliderVolume = {};
 var _volumeWidth = 95;
 $(document).ready(function () {
@@ -211,15 +211,13 @@ _sliderVolume.calculateFromMouse = function (a) {
 _sliderVolume.setup = function () {
     jQuery("#volume").append(jQuery('<div class="fill"></div>'));
     jQuery("#volume").append(jQuery('<span class="handler" href="#"></span>'));
-    jQuery("#volume").bind('mousedown', function (a) {
+    jQuery("body").bind("mousedown", function (a) {
+        jQuery("#volume").unbind("mousemove");
+    });
+	jQuery("#volume").bind('mousedown', function (a) {
         var b = jQuery("#volume").offset();
         _sliderVolume.calculateFromMouse(a.pageX - b.left);
         _sliderVolume.calculateFromMouse(a.pageX + b.right);
-        jQuery("#volume").mousemove(function (a) {
-            var b = jQuery("#volume").offset();
-            _sliderVolume.calculateFromMouse(a.pageX - b.left);
-            _sliderVolume.calculateFromMouse(a.pageX + b.right);
-        });
     });
     jQuery("body").bind("mouseup", function (a) {
         jQuery("#volume").unbind("mousemove");
