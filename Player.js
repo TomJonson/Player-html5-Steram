@@ -5,8 +5,8 @@
  * Author: Tom Jonson
  * Licensed under the GNU General Public License v2.0.
  * https://github.com/TomJonson/html5-Audio-Player/blob/master/LICENSE
- * Version: 5.1.4
- * Date: 25.12.2018
+ * Version: 5.1.10
+ * Date: 28.12.2018
  *
  * WebSite (https://github.com/TomJonson)
  */
@@ -107,9 +107,9 @@ fix.prototype = {
 };
 return fix;
 })(jQuery);
-var _volume = 100;
+var _volume = 50;
 var _sliderVolume = {};
-var _volumeWidth = 95;
+var _volumeWidth = 90;
 $(document).ready(function () {
     $("#containerHidden").jPlayer({
         ready: function (event) {
@@ -131,7 +131,6 @@ $(document).ready(function () {
         autoPlay: true,
         preload: "none",
 	smoothPlayBar: true,
-        volume: 1,
         wmode: "transparent",
         currentTime: ".jtimer",
         useStateClassSkin: true,
@@ -209,9 +208,9 @@ _sliderVolume.getValue = function () {
 };
 _sliderVolume.draw = function () {
     var a = _volumeWidth - 2 * _sliderVolume._uipadding, a = _sliderVolume.getValue() / 100 * a + _sliderVolume._uipadding;
-    jQuery("#volume .handler").css("left", a + "px");
-    jQuery("#volume .handler").css("right", a + "px");
-    jQuery("#volume .fill").css("width", a + "px");
+    jQuery('#volume .handler').css('left', a + 'px');
+    jQuery('#volume .fill').css('width', a + 'px');
+    jQuery('#volume .handler').attr('title', 'Volume');
 };
 _sliderVolume.calculateFromMouse = function (a) {
     a -= _sliderVolume._uipadding;
@@ -219,21 +218,18 @@ _sliderVolume.calculateFromMouse = function (a) {
     _sliderVolume.onchange(_sliderVolume.getValue());
 };
 _sliderVolume.setup = function () {
-    jQuery("#volume").append(jQuery('<div class="fill"></div>'));
-    jQuery("#volume").append(jQuery('<span class="handler" href="#"></span>'));
-    jQuery("body").bind("mousedown", function (a) {
-        jQuery("#volume").unbind("mousemove");
+    jQuery('#volume').append(jQuery('<div class="fill"></div>'));
+    jQuery('#volume').append(jQuery('<span class="handler" href="#"></span>'));
+    jQuery('#volume').mousedown(function (a) {
+        var b = jQuery('#volume').offset();
+        jQuery('#volume').bind('mousemove', function (a) {
+            _sliderVolume.calculateFromMouse(a.pageX - b.left);
+        });
+		_sliderVolume.getValue();
     });
-	jQuery("#volume").bind('mousedown', function (a) {
-        var b = jQuery("#volume").offset();
-        _sliderVolume.calculateFromMouse(a.pageX - b.left);
-    });
-    jQuery("body").bind("mouseup", function (a) {
-        jQuery("#volume").unbind("mousemove");
-    });
-    jQuery("#volume").bind("mouseup", function (a) {
-        var b = jQuery("#volume").offset();
-        _sliderVolume.calculateFromMouse(a.pageX + b.right);
+    jQuery('#volume').mouseup(function (a) {
+        var b = jQuery('#volume').offset();
+        jQuery('#volume').unbind('mousemove');
     });
     _sliderVolume.draw();
 };
