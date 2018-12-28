@@ -7,4 +7,4 @@ Most popular audio formats (MP3, MP4, AAC, Wave).
 
 This is Small Web Player Plugin.
 </br>
-Works on (PC, Tablet, Mobile) Web Browsers.
+Works on (PC, Tablet, Mobile, Smart-Tv) Web Browsers.
