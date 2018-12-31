@@ -5,12 +5,12 @@
  * Author: Tom Jonson
  * Licensed under the GNU General Public License v2.0.
  * https://github.com/TomJonson/html5-Audio-Player/blob/master/LICENSE
- * Version: 5.1.10
- * Date: 28.12.2018
+ * Version: 5.1.12
+ * Date: 31.12.2018
  *
  * WebSite (https://github.com/TomJonson)
  */
-var jPlayerAndroidFix = (function($) {
+var jPlayerAndroidFix = (function(jQuery) {
 	var fix = function(id, media, options) {
 		this.playFix = false;
 		this.init(id, media, options);
@@ -23,16 +23,16 @@ var jPlayerAndroidFix = (function($) {
 			this.media = media;
 			this.options = options;
 			// Make a jQuery selector of the id, for use by the jPlayer instance.
-			this.player = $(this.id);
+			this.player = jQuery(this.id);
 			// Make the ready event to set the media to initiate.
-			this.player.bind($.jPlayer.event.ready, function(event) {
+			this.player.bind(jQuery.jPlayer.event.ready, function(event) {
 				// Use this fix's setMedia() method.
 				self.setMedia(self.media);
 			});
 			// Apply Android fixes
 			if ($.jPlayer.platform.android) {
 				// Fix playing new media immediately after setMedia.
-				this.player.bind($.jPlayer.event.progress, function(event) {
+				this.player.bind(jQuery.jPlayer.event.progress, function(event) {
 					if (self.playFixRequired) {
 						self.playFixRequired = false;
 						// Enable the contols again
@@ -40,12 +40,12 @@ var jPlayerAndroidFix = (function($) {
 						// Play if required, otherwise it will wait for the normal GUI input.
 						if (self.playFix) {
 							self.playFix = false;
-							$(this).jPlayer("play");
+							jQuery(this).jPlayer("play");
 						}
 					}
 				});
 				// Fix missing ended events.
-				this.player.bind($.jPlayer.event.ended, function(event) {
+				this.player.bind(jQuery.jPlayer.event.ended, function(event) {
 					if (self.endedFix) {
 						self.endedFix = false;
 						setTimeout(function() {
@@ -54,13 +54,13 @@ var jPlayerAndroidFix = (function($) {
 						// what if it was looping?
 					}
 				});
-				this.player.bind($.jPlayer.event.pause, function(event) {
+				this.player.bind(jQuery.jPlayer.event.pause, function(event) {
 					if (self.endedFix) {
 						var remaining = event.jPlayer.status.duration - event.jPlayer.status.currentTime;
 						if (event.jPlayer.status.currentTime === 0 || remaining < 1) {
 							// Trigger the ended event from inside jplayer instance.
 							setTimeout(function() {
-								self.jPlayer._trigger($.jPlayer.event.ended);
+								self.jPlayer._trigger(jQuery.jPlayer.event.ended);
 							}, 0);
 						}
 					}
@@ -86,7 +86,7 @@ var jPlayerAndroidFix = (function($) {
 		},
 		play: function() {
 			// Apply Android fixes
-			if ($.jPlayer.platform.android && this.playFixRequired) {
+			if (jQuery.jPlayer.platform.android && this.playFixRequired) {
 				// Apply Android play fix, if it is required.
 				this.playFix = true;
 			} else {
@@ -96,7 +96,7 @@ var jPlayerAndroidFix = (function($) {
 		},
 		resetAndroid: function() {
 			// Apply Android fixes
-			if ($.jPlayer.platform.android) {
+			if (jQuery.jPlayer.platform.android) {
 				this.playFix = false;
 				this.playFixRequired = true;
 				this.endedFix = true;
@@ -107,23 +107,24 @@ var jPlayerAndroidFix = (function($) {
 	};
 	return fix;
 })(jQuery);
+
 var _volume = 50;
 var _sliderVolume = {};
 var _volumeWidth = 90;
-$(document).ready(function() {
-	$("#containerHidden").jPlayer({
+jQuery(document).ready(function() {
+	jQuery("#containerHidden").jPlayer({
 		ready: function(event) {
 			ready = true;
-			$(this).jPlayer("setMedia", stream);
-			$(this).jPlayer("play", 1);
+			jQuery(this).jPlayer("setMedia", stream);
+			jQuery(this).jPlayer("play", 1);
 		},
 		pause: function() {
-			$(this).jPlayer("clearMedia");
+			jQuery(this).jPlayer("clearMedia");
 		},
 		error: function(event) {
 			if (ready && event.jPlayer.error.type === $.jPlayer.error.URL_NOT_SET) {
 				// Setup the media stream again and play it.
-				$(this).jPlayer("setMedia", stream).jPlayer("play");
+				jQuery(this).jPlayer("setMedia", stream).jPlayer("play");
 			}
 		},
 		initialVolume: _volume / 100,
@@ -140,23 +141,23 @@ $(document).ready(function() {
 	_player = jQuery("#containerHidden");
 	var id = "#containerHidden";
 	var stream = {
-		mp3: (location.protocol == "https:" ? "https:" : "http:") + "//yours url here"
+		mp3: (location.protocol == "https:" ? "https:" : "http:") + "//url here"
 	};
-	_player.bind($.jPlayer.event.stop, function() {
-		_player.jPlayer("clearMedia"), StopPlayer(), _player.bind($.jPlayer.event.timeupdate, self.update_timer);
-	}), _player.bind($.jPlayer.event.play, function() {
-		_player.jPlayer("play"), StartPlayer(), _player.bind($.jPlayer.event.timeupdate, self.update_timer);
+	_player.bind(jQuery.jPlayer.event.stop, function() {
+		_player.jPlayer("clearMedia"), StopPlayer(), _player.bind(jQuery.jPlayer.event.timeupdate, self.update_timer);
+	}), _player.bind(jQuery.jPlayer.event.play, function() {
+		_player.jPlayer("play"), StartPlayer(), _player.bind(jQuery.jPlayer.event.timeupdate, self.update_timer);
 	}), self.update_timer = function(e) {
-		e = e.jPlayer.status, $(".jtimer").text($.jPlayer.convertTime(e.currentTime));
+		e = e.jPlayer.status, jQuery(".jtimer").text(jQuery.jPlayer.convertTime(e.currentTime));
 	};
 	_player.bind(jQuery.jPlayer.event.pause, function(a) {
 		jQuery(this).jPlayer("clearMedia");
 		StopPlayer();
 	});
-	_player.bind($.jPlayer.event.play, function(a) {
+	_player.bind(jQuery.jPlayer.event.play, function(a) {
 		StartPlayer();
 	});
-	_player.bind($.jPlayer.event.volumechange, function(a) {
+	_player.bind(jQuery.jPlayer.event.volumechange, function(a) {
 		VolumeChanged(a);
 	});
 	_sliderVolume.setup();
@@ -170,12 +171,14 @@ function PlayPause() {
 
 function StartPlayer() {
 	jQuery("#aPlayPause").css("background-position", "-59px 0px");
+	jQuery('#aPlayPause').attr('title', 'Stop');
 	_isPlaying = !0;
 	return !1;
 }
 
 function StopPlayer() {
 	jQuery("#aPlayPause").css("background-position", "0px 0px");
+	jQuery('#aPlayPause').attr('title', 'Play');
 	_isPlaying = !1;
 	return !1;
 }
@@ -184,6 +187,7 @@ function VolumeChanged(a) {}
 jQuery("#aPlayPause").click(function() {
 	return PlayPause();
 });
+
 document.onkeydown = function(e) {
 	if (e.keyCode == 32) {
 		return PlayPause();
@@ -200,15 +204,18 @@ _sliderVolume._uipadding = 5;
 _sliderVolume.onchange = function(a) {
 	ChangeVolume(a);
 };
+
 _sliderVolume.setValue = function(a) {
 	if (isNaN(a)) return !1;
 	a = Math.max(0, Math.min(100, a));
 	_sliderVolume._value = a;
 	_sliderVolume.draw();
 };
+
 _sliderVolume.getValue = function() {
 	return _sliderVolume._value;
 };
+
 _sliderVolume.draw = function() {
 	var a = _volumeWidth - 2 * _sliderVolume._uipadding,
 		a = _sliderVolume.getValue() / 100 * a + _sliderVolume._uipadding;
@@ -216,24 +223,30 @@ _sliderVolume.draw = function() {
 	jQuery('#volume .fill').css('width', a + 'px');
 	jQuery('#volume .handler').attr('title', 'Volume');
 };
+
 _sliderVolume.calculateFromMouse = function(a) {
 	a -= _sliderVolume._uipadding;
 	_sliderVolume.setValue(a / (_volumeWidth - 2 * _sliderVolume._uipadding) * 100);
 	_sliderVolume.onchange(_sliderVolume.getValue());
 };
+
 _sliderVolume.setup = function() {
 	jQuery('#volume').append(jQuery('<div class="fill"></div>'));
 	jQuery('#volume').append(jQuery('<span class="handler" href="#"></span>'));
-	jQuery('#volume').mousedown(function(a) {
-		var b = jQuery('#volume').offset();
-		jQuery('#volume').bind('mousemove', function(a) {
-			_sliderVolume.calculateFromMouse(a.pageX - b.left);
-		});
-		_sliderVolume.getValue();
-	});
-	jQuery('#volume').mouseup(function(a) {
-		var b = jQuery('#volume').offset();
-		jQuery('#volume').unbind('mousemove');
-	});
-	_sliderVolume.draw();
+	jQuery('#volume').mousedown(function() {
+    var parentOffset = jQuery(this).offset(),
+    width = jQuery(this).width();
+    jQuery(window).mousemove(function(a) {
+      var x = a.pageX - parentOffset.left,
+      currentPosition = x/width
+      var barValue = Math.floor(currentPosition*100);
+      if (barValue < 0 ) barValue = 0;
+      if (barValue > 100) barValue = 100;
+      _sliderVolume.calculateFromMouse(a.pageX - parentOffset.left);
+    });
+    return false;
+  })
+  jQuery(document).on("mouseup", function() {
+    jQuery(window).unbind("mousemove");
+  });
 };
