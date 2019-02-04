@@ -1,12 +1,12 @@
 /*!
  * Player Plugin for jPlayer JavaScript Library
  * Web Player Only HTML5 Version
- * Copyright 2017-2018 Player
+ * Copyright 2017-2019 Player
  * Author: Tom Jonson
  * Licensed under the GNU General Public License v2.0.
  * https://github.com/TomJonson/html5-Audio-Player/blob/master/LICENSE
- * Version: 5.1.12
- * Date: 31.12.2018
+ * Version: 5.3.20
+ * Date: 3.02.2019
  *
  * WebSite (https://github.com/TomJonson)
  */
@@ -108,26 +108,25 @@ var jPlayerAndroidFix = (function(jQuery) {
 	return fix;
 })(jQuery);
 
+var _player;
+var _isPlaying = true;
 var _volume = 50;
 var _sliderVolume = {};
-var _volumeWidth = 90;
-jQuery(document).ready(function() {
-	jQuery("#containerHidden").jPlayer({
-		ready: function(event) {
+var _volumeWidth = 95;
+var _streamUrl = (location.protocol == "https:" ? "https:" : "http:") + "//yours link here";
+jQuery(document).ready(function () {
+    jQuery('#containerHidden').jPlayer({
+        ready: function (b) {
 			ready = true;
-			jQuery(this).jPlayer("setMedia", stream);
-			jQuery(this).jPlayer("play", 1);
-		},
-		pause: function() {
-			jQuery(this).jPlayer("clearMedia");
-		},
-		error: function(event) {
-			if (ready && event.jPlayer.error.type === $.jPlayer.error.URL_NOT_SET) {
-				// Setup the media stream again and play it.
-				jQuery(this).jPlayer("setMedia", stream).jPlayer("play");
-			}
-		},
-		initialVolume: _volume / 100,
+            $(this).jPlayer('setMedia', { mp3: _streamUrl }).jPlayer('play');
+            $(this).jPlayer("play", 1);
+            var d = void 0 === document.ontouchstart ? 'click' : 'touchstart', e = function () {
+                    jQuery('#aPlayPause').jPlayer('play');
+                    document.documentElement.removeEventListener(d, e, !0);
+                };
+            document.documentElement.addEventListener(d, e, !0);
+        },
+        initialVolume: _volume / 100,
 		supplied: "mp3",
 		autoPlay: true,
 		preload: "none",
@@ -137,61 +136,70 @@ jQuery(document).ready(function() {
 		useStateClassSkin: true,
 		autoBlur: false,
 		keyEnabled: true
-	});
-	_player = jQuery("#containerHidden");
-	var id = "#containerHidden";
-	var stream = {
-		mp3: (location.protocol == "https:" ? "https:" : "http:") + "//url here"
-	};
-	_player.bind(jQuery.jPlayer.event.stop, function() {
-		_player.jPlayer("clearMedia"), StopPlayer(), _player.bind(jQuery.jPlayer.event.timeupdate, self.update_timer);
-	}), _player.bind(jQuery.jPlayer.event.play, function() {
-		_player.jPlayer("play"), StartPlayer(), _player.bind(jQuery.jPlayer.event.timeupdate, self.update_timer);
-	}), self.update_timer = function(e) {
-		e = e.jPlayer.status, jQuery(".jtimer").text(jQuery.jPlayer.convertTime(e.currentTime));
-	};
-	_player.bind(jQuery.jPlayer.event.pause, function(a) {
-		jQuery(this).jPlayer("clearMedia");
-		StopPlayer();
-	});
-	_player.bind(jQuery.jPlayer.event.play, function(a) {
-		StartPlayer();
-	});
-	_player.bind(jQuery.jPlayer.event.volumechange, function(a) {
-		VolumeChanged(a);
-	});
-	_sliderVolume.setup();
-	_sliderVolume.draw();
+    });
+    _player = jQuery('#containerHidden');
+    var a = new jPlayerAndroidFix(PlayPause(), _streamUrl, _sliderVolume);
+    _player.bind($.jPlayer.event.stop, function () {
+        _player.jPlayer('clearMedia'), Stopped(), _player.bind($.jPlayer.event.timeupdate, self.update_timer);
+    }), _player.bind($.jPlayer.event.play, function () {
+        $(this).data('jPlayer').androidFix.setMedia = true, Playing(), _player.bind($.jPlayer.event.timeupdate, self.update_timer);
+    }), self.update_timer = function (e) {
+        e = e.jPlayer.status, $('.jtimer').text($.jPlayer.convertTime(e.currentTime));
+    };
+    _player.bind(jQuery.jPlayer.event.pause, function (a) {
+        jQuery(this).jPlayer('clearMedia');
+        Stopped();
+    });
+    _player.bind($.jPlayer.event.play, function (a) {
+        Playing();
+    });
+    _player.bind($.jPlayer.event.volumechange, function (a) {
+        VolumeChanged(a);
+    });
+    _sliderVolume.setup();
+    _sliderVolume.draw();
 });
-
-function PlayPause() {
-	if (_isPlaying) return _player.jPlayer("clearMedia"), StopPlayer();
-	_player.jPlayer("play"), StartPlayer();
-}
-
-function StartPlayer() {
-	jQuery("#aPlayPause").css("background-position", "-59px 0px");
-	jQuery('#aPlayPause').attr('title', 'Stop');
-	_isPlaying = !0;
-	return !1;
-}
-
 function StopPlayer() {
-	jQuery("#aPlayPause").css("background-position", "0px 0px");
-	jQuery('#aPlayPause').attr('title', 'Play');
-	_isPlaying = !1;
+    _player.jPlayer('pause');
+    Stopped();
+    return !1;
+}
+function PlayPause() {
+    if (_isPlaying)
+        return _player.jPlayer('clearMedia'), Stopped();
+    _player.jPlayer('setMedia', { mp3: _streamUrl }).jPlayer('play', 1);
+    Playing();
 	return !1;
 }
-
-function VolumeChanged(a) {}
-jQuery("#aPlayPause").click(function() {
-	return PlayPause();
+function StartPlaying(a) {
+    _player.jPlayer('play');
+    Playing();
+    return !1;
+}
+_sliderVolume._value = _volume;
+_sliderVolume._uipadding = 5;
+_sliderVolume.onchange = function (a) {
+    ChangeVolume(a);
+};
+function Playing() {
+    jQuery('#aPlayPause').css('background-position', '-59px 0px');
+    _isPlaying = !0;
+    return !1;
+}
+function Stopped() {
+    jQuery('#aPlayPause').css('background-position', '0px 0px');
+    return _isPlaying = !1;
+}
+jQuery('#aPlayPause').click(function () {
+    return PlayPause();
 });
+function VolumeChanged(a) {}
+
 
 document.onkeydown = function(e) {
 	if (e.keyCode == 32) {
 		return PlayPause();
-	} else if (e.keyCode == 75) {
+	} else if (e.keyCode == 80) {
 		return PlayPause();
 	}
 };
