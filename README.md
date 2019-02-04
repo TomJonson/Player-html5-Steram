@@ -5,6 +5,6 @@ Only HTML5 Version for streaming.
 Most support popular audio formats (MP3, MP4, AAC, Wave).
 ===================
 
-This is Small Web Player Plugin.
+This is Small Web Player Plugin for jPlayer.
 </br>
 Works on (PC, Tablet, Mobile, Smart-Tv) Web Browsers.
