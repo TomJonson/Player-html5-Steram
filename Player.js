@@ -5,7 +5,7 @@
  * You need add play button them click.
  * Copyright 2017-2019 Player.
  * Author: Tom Jonson.
- * Licensed under the GNU General Public License v2.0.
+ * Licensed under the Apache License 2.0.
  * https://github.com/TomJonson/html5-Audio-Player/blob/master/LICENSE
  * Version: 5.27.347
  * Date: 05.05.2019
