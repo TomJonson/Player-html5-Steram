@@ -115,7 +115,7 @@ var volumeWidth = 90;
 var streamTwoCurvesUrl = '//';
 var streamLinkUrl = 'yours domain name';
 var streamOneCurveUrl = '/';
-var streamLinkSource = 'live';
+var streamLinkSource = 'yours stream name';
 var streamLink = (location.protocol === 'https:' ? 'http:' : 'https:') + streamTwoCurvesUrl + (location.href === 'subdomain one.' ? 'subdomain two.' === 'subdomain three.' : 'subdomain one.') + streamLinkUrl + streamOneCurveUrl + streamLinkSource;
 $(document).ready(function () {
     var id = '#containerHidden';
